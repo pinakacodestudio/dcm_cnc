@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("inc/connection.php");
+include("inc/funcstuffs.php");
 
 ini_set('max_execution_time', 6000);
 ini_set('memory_limit', '-1');
@@ -46,7 +47,8 @@ if ($_SESSION["sadmin_username"] != "") {
 	define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 	date_default_timezone_set('Asia/kolkata');
-	
+	/** Error reporting */
+	error_reporting(E_ALL);
 
 	/** Include PHPExcel */
 	require_once dirname(__FILE__) . '/Classes/Phpspreadsheet/vendor/autoload.php';
@@ -92,21 +94,20 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	);
 
-	$wheresql = "";
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
 		$msdate = $date->format('Y-m-d');
 		$date = DateTime::createFromFormat('d/m/Y', $medate);
 		$medate = $date->format('Y-m-d');
 
-		$wheresql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
+		$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
 
 	}
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
 
-	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabname.required_product_q_per_hr) as requestnos, sum($tabpro3.total_q_after_rejection) as actualnos FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $wheresql . " group by $tabname.machine";
+	$sql = "SELECT $tabname.id,$tabmachine.machine, sum($tabname.required_product_q_per_hr) as requestnos, sum($tabpro3.total_q_after_rejection) as actualnos FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $sql . " group by $tabname.machine";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 		$date = new DateTime($row["productiondate"]);

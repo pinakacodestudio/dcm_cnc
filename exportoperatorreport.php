@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("inc/connection.php");
+include("inc/funcstuffs.php");
 
 ini_set('max_execution_time', 6000);
 ini_set('memory_limit', '-1');
@@ -46,7 +47,8 @@ if ($_SESSION["sadmin_username"] != "") {
 	define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 	date_default_timezone_set('Asia/kolkata');
-	
+	/** Error reporting */
+	error_reporting(E_ALL);
 
 	/** Include PHPExcel */
 	require_once dirname(__FILE__) . '/Classes/Phpspreadsheet/vendor/autoload.php';

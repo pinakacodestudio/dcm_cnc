@@ -1,4 +1,4 @@
-<?php
+	<?php
 	session_start();
 	include("inc/connection.php");
 	require("inc/funcstuffs.php");

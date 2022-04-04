@@ -6,10 +6,6 @@ $tab_user_info = "company";
 
 
 $sql = "select * from $tab_user_info where status=1 and usertype=1 and username='" . mysqli_real_escape_string($db, StringRepair($_POST["username"])) . "' and password='" . mysqli_real_escape_string($db, StringRepair($_POST["password"])) . "'";
-
-
-
-
 $rs = $db->query($sql) or die("cannot Select User" . $db->error);
 if ($rs->num_rows > 0) {
     $today = date("Y-m-d H:i:s");

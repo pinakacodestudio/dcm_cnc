@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("inc/connection.php");
+include("inc/funcstuffs.php");
 
 ini_set('max_execution_time', 6000);
 ini_set('memory_limit', '-1');
@@ -94,21 +95,20 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	);
 
-	$wheresql = "";
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
 		$msdate = $date->format('Y-m-d');
 		$date = DateTime::createFromFormat('d/m/Y', $medate);
 		$medate = $date->format('Y-m-d');
 
-		$wheresql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
+		$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
 
 	}
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
 
-	$sql = "SELECT $tabname.id,$taboperator.operator, sum($tabpro3.turning_rejection_nos) as rejectionnos  FROM $tabname LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $wheresql . " group by $tabname.operator";
+	$sql = "SELECT $tabname.id,$taboperator.operator, sum($tabpro3.turning_rejection_nos) as rejectionnos  FROM $tabname LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $sql . " group by $tabname.operator";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 

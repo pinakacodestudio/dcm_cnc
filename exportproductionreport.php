@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("inc/connection.php");
+include("inc/funcstuffs.php");
 
 ini_set('max_execution_time', 6000);
 ini_set('memory_limit', '-1');
@@ -44,7 +45,8 @@ if ($_SESSION["sadmin_username"] != "") {
 	define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 	date_default_timezone_set('Asia/kolkata');
-	
+	/** Error reporting */
+	error_reporting(E_ALL);
 
 	/** Include PHPExcel */
 	require_once dirname(__FILE__) . '/Classes/Phpspreadsheet/vendor/autoload.php';
@@ -90,20 +92,18 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	);
 
-	$wheresql = "";	
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
 		$msdate = $date->format('Y-m-d');
 		$date = DateTime::createFromFormat('d/m/Y', $medate);
 		$medate = $date->format('Y-m-d');
-		$wheresql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
+		$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
 	}
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
-	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine,$taboperator.operator,$tabname.shift,$tabname.required_product_q_per_hr,$tabpro1.total_q_before_rejection,$tabpro2.total_q_after_rejection,$tabpro2.production_loss_increase_q,$tabpro3.total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro1 ON $tabpro1.production_1=$tabname.id LEFT JOIN $tabpro2 ON $tabpro2.production_1=$tabname.id LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator".$wheresql;
+	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine,$taboperator.operator,$tabname.shift,$tabname.required_product_q_per_hr,$tabpro1.total_q_before_rejection,$tabpro2.total_q_after_rejection,$tabpro2.production_loss_increase_q,$tabpro3.total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro1 ON $tabpro1.production_1=$tabname.id LEFT JOIN $tabpro2 ON $tabpro2.production_1=$tabname.id LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator";
 
-	
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 		$k++;
@@ -152,7 +152,7 @@ if ($_SESSION["sadmin_username"] != "") {
 
  
 	// Save Excel 2007 file
-	//date('H:i:s') , " Write to Excel2007 format" , EOL;
+//date('H:i:s') , " Write to Excel2007 format" , EOL;
 	$callStartTime = microtime(true);
 	$filename = "export_production_report_from_" . $msdate . "_to_" . $medate . ".xlsx";
 	$objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($objPHPExcel, 'Xlsx');

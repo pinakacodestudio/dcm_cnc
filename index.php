@@ -3,7 +3,7 @@ session_start();
 require("inc/connection.php");
 require("inc/funcstuffs.php");
 
-if (isset($_SESSION["sadmin_username"]) && $_SESSION["sadmin_username"]  != "") {
+if ($_SESSION["sadmin_username"] != "") {
 	print "<META http-equiv='refresh' content=0;URL=" . $sitepath . "home.php>";
 	exit;
 }

@@ -1,6 +1,7 @@
 <?php
 session_start();
 include("inc/connection.php");
+include("inc/funcstuffs.php");
 
 ini_set('max_execution_time', 6000);
 ini_set('memory_limit', '-1');
@@ -95,21 +96,20 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	);
 
-	$wheresql = "";
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
 		$msdate = $date->format('Y-m-d');
 		$date = DateTime::createFromFormat('d/m/Y', $medate);
 		$medate = $date->format('Y-m-d');
 
-		$wheresql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
+		$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
 
 	}
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
 
-	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.total_breakdown_hours) as total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $wheresql . " group by $tabname.machine";
+	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.total_breakdown_hours) as total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $sql . " group by $tabname.machine";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 
