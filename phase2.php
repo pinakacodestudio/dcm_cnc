@@ -32,6 +32,7 @@ if ($_SESSION["sadmin_username"] != "") {
 			$setting_rejection_nos = $row["setting_rejection_nos"];
 			$pre_machining_rejection_nos = $row["pre_machining_rejection_nos"];
 			$forging_rejection_nos = $row["forging_rejection_nos"];
+			$rework_nos = $row["rework_nos"];
 			$total_q_after_rejection = $row["total_q_after_rejection"];
 			$expected_q = $row["expected_q"];
 			$setting_hr = $row["setting_hr"];
@@ -197,6 +198,13 @@ if ($_SESSION["sadmin_username"] != "") {
 							</div>
 
                              <div class="control-group">
+							  <label class="control-label">Rework</label>
+							  <div class="controls">
+								<input type="number" class="input-xlarge callblur" id="rework_nos" name="rework_nos" value="<?= $rework_nos; ?>"  placeholder="0" required>
+							  </div>
+							</div>
+
+                             <div class="control-group">
 							  <label class="control-label">Total Qty. After Rejection</label>
 							  <div class="controls">
 								<input type="text" class="input-xlarge" id="dtotal_q_after_rejection" name="dtotal_q_after_rejection" value="<?= $total_q_after_rejection; ?>" disabled  placeholder="0" required>
@@ -235,6 +243,7 @@ if ($_SESSION["sadmin_username"] != "") {
 						var srid = parseInt($("#setting_rejection_nos").val()); // Field Value
 						var pmrid = parseInt($("#pre_machining_rejection_nos").val()); // Field Value
 						var frid = parseInt($("#forging_rejection_nos").val()); // Field Value
+						var reworkid = parseInt($("#rework_nos").val()); // Field Value
 
 						if(isNaN(vid)){
 							vid = 0;
@@ -251,10 +260,13 @@ if ($_SESSION["sadmin_username"] != "") {
 						if(isNaN(frid)){
 							frid = 0;
 						}
+						if(isNaN(reworkid)){
+							reworkid = 0;
+						}
 						var start_count = parseInt($("#start_count").val()); // Field Value
 						var bfr = parseInt($("#total_q_before_rejection").val()); // Field Value
 
-						var tot = (bfr - start_count ) - (vid + tjid + srid + pmrid + frid);
+						var tot = (bfr - start_count ) - (vid + tjid + srid + pmrid + frid + reworkid);
 
 						$('#dtotal_q_after_rejection').val(tot);
 						$('#total_q_after_rejection').val(tot);

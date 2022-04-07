@@ -28,6 +28,7 @@ if ($_SESSION["sadmin_username"] != "") {
         $setting_rejection_nos = StringRepair($_POST["setting_rejection_nos"]);
         $pre_machining_rejection_nos = StringRepair($_POST["pre_machining_rejection_nos"]);
         $forging_rejection_nos = StringRepair($_POST["forging_rejection_nos"]);
+        $rework_nos = StringRepair($_POST["rework_nos"]);
         $total_q_after_rejection = StringRepair($_POST["total_q_after_rejection"]);
 
 
@@ -39,6 +40,7 @@ if ($_SESSION["sadmin_username"] != "") {
                 'setting_rejection_nos' => $setting_rejection_nos,
                 'pre_machining_rejection_nos' => $pre_machining_rejection_nos,
                 'forging_rejection_nos' => $forging_rejection_nos,
+                'rework_nos' => $rework_nos,
                 'total_q_after_rejection' => $total_q_after_rejection,
 
             );

@@ -51,6 +51,69 @@ if($_SESSION["sadmin_username"]!="")
         $qa11 = StringRepair($_POST["q_after_11"]);
         $qa12 = StringRepair($_POST["q_after_12"]);
 
+        $totalhour= 0;
+        $check_1 = 0;
+        if ($_POST["check_1"] != "") {
+            $check_1 = 1;
+            $totalhour++;
+        }
+        $check_2 = 0;
+        if ($_POST["check_2"] != "") {
+            $check_2 = 1;
+            $totalhour++;
+        }
+        $check_3 = 0;
+        if ($_POST["check_3"] != "") {
+            $check_3 = 1;
+            $totalhour++;
+        }
+        $check_4 = 0;
+        if ($_POST["check_4"] != "") {
+            $check_4 = 1;
+            $totalhour++;
+        }
+        $check_5 = 0;
+        if ($_POST["check_5"] != "") {
+            $check_5 = 1;
+            $totalhour++;
+        }
+        $check_6 = 0;
+        if ($_POST["check_6"] != "") {
+            $check_6 = 1;
+            $totalhour++;
+        }
+        $check_7 = 0;
+        if ($_POST["check_7"] != "") {
+            $check_7 = 1;
+            $totalhour++;
+        }
+        $check_8 = 0;
+        if ($_POST["check_8"] != "") {
+            $check_8 = 1;
+            $totalhour++;
+        }
+        $check_9 = 0;
+        if ($_POST["check_9"] != "") {
+            $check_9 = 1;
+            $totalhour++;
+        }
+        $check_10 = 0;
+        if ($_POST["check_10"] != "") {
+            $check_10 = 1;
+            $totalhour++;
+        }
+        $check_11 = 0;
+        if ($_POST["check_11"] != "") {
+            $check_11 = 1;
+            $totalhour++;
+        }
+        $check_12 = 0;
+        if ($_POST["check_12"] != "") {
+            $check_12 = 1;
+            $totalhour++;
+        }
+        
+
         $qar = StringRepair($_POST["total_q_before_rejection"]);
 
         if($_POST["opt"]=="Edit")
@@ -82,6 +145,19 @@ if($_SESSION["sadmin_username"]!="")
                 'q_after_10'=>$qa10,
                 'q_after_11'=>$qa11,
                 'q_after_12'=>$qa12,
+                'check_1'=>$check_1,
+                'check_2'=>$check_2,
+                'check_3'=>$check_3,
+                'check_4'=>$check_4,
+                'check_5'=>$check_5,
+                'check_6'=>$check_6,
+                'check_7'=>$check_7,
+                'check_8'=>$check_8,
+                'check_9'=>$check_9,
+                'check_10'=>$check_10,
+                'check_11'=>$check_11,
+                'check_12'=>$check_12,
+                'totalhour'=>$totalhour,
                 'total_q_before_rejection'=>$qar
             );
 

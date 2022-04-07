@@ -1,0 +1,10 @@
+ALTER TABLE `production_1` ADD INDEX(`productiondate`);
+ALTER TABLE `production_2` ADD INDEX(`production_1`);
+ALTER TABLE `production_3` ADD INDEX(`production_1`);
+ALTER TABLE `production_machine_breakdown` ADD INDEX(`production_1`);
+
+ALTER TABLE `production_2` ADD `check_1` TINYINT(1) NOT NULL DEFAULT '1' AFTER `q_after_12`, ADD `check_2` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_1`, ADD `check_3` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_2`, ADD `check_4` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_3`, ADD `check_5` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_4`, ADD `check_6` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_5`, ADD `check_7` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_6`, ADD `check_8` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_7`, ADD `check_9` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_8`, ADD `check_10` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_9`, ADD `check_11` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_10`, ADD `check_12` TINYINT(1) NOT NULL DEFAULT '1' AFTER `check_11`; 
+
+ALTER TABLE `production_2` ADD `totalhour` INT(11) NOT NULL DEFAULT '12' AFTER `check_12`; 
+
+ALTER TABLE `production_3` ADD `rework_nos` INT(11) NOT NULL DEFAULT '0' AFTER `forging_rejection_nos`; 
