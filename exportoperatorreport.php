@@ -78,22 +78,19 @@ if ($_SESSION["sadmin_username"] != "") {
 	$j = 1;
 	$i = 0;
 	$objPHPExcel->getActiveSheet()->getStyle('A2:Z5000')->getAlignment()->setWrapText(true);
-	$styleArray = array(
-		'font' => array(
-			'name' => "Tahoma",
-			'size' => 10,
-		),
-		'alignment' => array(
-			'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-		),
-		'borders' => array(
-			'allborders' => array(
-				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-			),
-		),
+	$styleArray = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ];
 
-	);
 
 	$wheresql = "";
 
@@ -109,26 +106,56 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
+	$percentage = 0;
+	$rework_nos = 0;
+	$req_qty = 0;
+	$prod_qty = 0;
+	$turning_rejection_nos = 0;
+	$variation_nos = 0;
 
-	$sql = "SELECT $taboperator.operator, round(avg(production_3.production_per),2) as avgproduction FROM $tabname LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $wheresql . " group by $tabname.operator";
+	$sql = "SELECT $taboperator.operator, round(avg(production_3.production_per),2) as avgproduction,sum($tabpro3.expected_q) as req_qty,sum($tabpro3.total_q_after_rejection) as prod_qty,sum($tabpro3.turning_rejection_nos) as turning_rejection_nos,sum($tabpro3.variation_nos) as variation_nos,sum($tabpro3.rework_nos) as rework_nos FROM $tabname LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id ".$wheresql." group by $tabname.operator";
 
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 
 		$k++;
 		$i++;
+		$operator = $row["operator"];
+		$percentage += $row["avgproduction"];
+		$req_qty += $row["req_qty"];
+		$prod_qty += $row["prod_qty"];
+		$turning_rejection_nos += $row["turning_rejection_nos"]; 
+		$variation_nos += $row["variation_nos"];
+		$rework_nos += $row["rework_nos"];
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $row["operator"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["avgproduction"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["req_qty"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('C' . $k, $row["prod_qty"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $row["turning_rejection_nos"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('E' . $k, $row["variation_nos"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $row["rework_nos"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $row["avgproduction"]);
 
 	}
-	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->applyFromArray($styleArray);
 
-	
+	$percentage = sprintf("%0.2f",$percentage/$i);
+	$k++;
+	$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, 'Total');
+	$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $req_qty);
+	$objPHPExcel->getActiveSheet()->setCellValue('C' . $k, $prod_qty);
+	$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $turning_rejection_nos);
+	$objPHPExcel->getActiveSheet()->setCellValue('E' . $k, $variation_nos);
+	$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $rework_nos);
+	$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $percentage);
+
+
+	$objPHPExcel->getActiveSheet()->getStyle("A9:G" . $k)->applyFromArray($styleArray);
+
 	// Setting Design
-	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setSize(8);
-	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setName('Calibri');
-	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:G" . $k)->getFont()->setSize(11);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:G" . $k)->getFont()->setBold(false);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:G" . $k)->getFont()->setName('Calibri');
+	$objPHPExcel->getActiveSheet()->getStyle("A9:G" . $k)->getAlignment()->setWrapText(true);
 
 	
 // Set page orientation and size

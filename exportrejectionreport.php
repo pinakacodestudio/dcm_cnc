@@ -78,22 +78,19 @@ if ($_SESSION["sadmin_username"] != "") {
 	$j = 1;
 	$i = 0;
 	$objPHPExcel->getActiveSheet()->getStyle('A2:Z5000')->getAlignment()->setWrapText(true);
-	$styleArray = array(
-		'font' => array(
-			'name' => "Tahoma",
-			'size' => 10,
-		),
-		'alignment' => array(
-			'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-		),
-		'borders' => array(
-			'allborders' => array(
-				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-			),
-		),
 
-	);
+	$styleArray = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ];
 
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
@@ -108,6 +105,7 @@ if ($_SESSION["sadmin_username"] != "") {
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
 
+	$totalrejectionnos = 0;
 	$sql = "SELECT $tabname.id,$taboperator.operator, sum($tabpro3.turning_rejection_nos) as rejectionnos  FROM $tabname LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $sql . " group by $tabname.operator";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
@@ -115,17 +113,24 @@ if ($_SESSION["sadmin_username"] != "") {
 		$k++;
 		$i++;
 
+		$totalrejectionnos += $row['rejectionnos'];
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $row["operator"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["rejectionnos"]);
-
 	}
+
+	$k++;
+	$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, 'Total');
+	$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $totalrejectionnos);
+
+
 	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->applyFromArray($styleArray);
 
-	
 	// Setting Design
-	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setSize(8);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setSize(11);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setBold(false);
 	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getFont()->setName('Calibri');
 	$objPHPExcel->getActiveSheet()->getStyle("A9:B" . $k)->getAlignment()->setWrapText(true);
+	
 
 // Set page orientation and size
     //echo date('H:i:s') , " Set page orientation and size" , EOL;

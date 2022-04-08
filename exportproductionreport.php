@@ -75,22 +75,18 @@ if ($_SESSION["sadmin_username"] != "") {
 	$k = 3;
 	$j = 1;
 	$i = 0;
-	$styleArray = array(
-		'font' => array(
-			'name' => "Tahoma",
-			'size' => 10,
-		),
-		'alignment' => array(
-			'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-		),
-		'borders' => array(
-			'allborders' => array(
-				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-			),
-		),
-
-	);
+	$styleArray = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ];
 
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
@@ -102,7 +98,14 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
-	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine,$taboperator.operator,$tabname.shift,$tabname.required_product_q_per_hr,$tabpro1.total_q_before_rejection,$tabpro2.total_q_after_rejection,$tabpro2.production_loss_increase_q,$tabpro3.total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro1 ON $tabpro1.production_1=$tabname.id LEFT JOIN $tabpro2 ON $tabpro2.production_1=$tabname.id LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator";
+	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine,$taboperator.operator,$tabname.shift,$tabname.required_product_q_per_hr,$tabpro2.production_per,$tabpro1.total_q_before_rejection,$tabpro2.total_q_after_rejection,$tabpro2.production_loss_increase_q,$tabpro3.total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro1 ON $tabpro1.production_1=$tabname.id LEFT JOIN $tabpro2 ON $tabpro2.production_1=$tabname.id LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id LEFT JOIN $taboperator ON $taboperator.id=$tabname.operator" . $sql;
+
+	$req_qty = 0;
+	$before_rej_qty = 0;
+	$after_rej_qty = 0;
+	$prod_loss = 0;
+	$prod_per = 0;
+	$tbh = 0;
 
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
@@ -116,6 +119,15 @@ if ($_SESSION["sadmin_username"] != "") {
 		} else {
 			$shift = "Night";
 		}
+		$production_loss_increase_q = str_replace(' ','',$row["production_loss_increase_q"]);
+
+		$req_qty += $row["required_product_q_per_hr"];
+		$before_rej_qty += $row["total_q_before_rejection"];
+		$after_rej_qty += $row["total_q_after_rejection"];
+		$prod_loss += $production_loss_increase_q;
+		$prod_per += $row["production_per"];
+		$tbh += $row["total_breakdown_hours"];
+		$production_per = strval(round($row["production_per"],2));
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $productiondate);
 		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["machine"]);
@@ -125,16 +137,31 @@ if ($_SESSION["sadmin_username"] != "") {
 		$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $row["total_q_before_rejection"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $row["total_q_after_rejection"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('H' . $k, $row["production_loss_increase_q"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $row["total_breakdown_hours"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $production_per);
+		$objPHPExcel->getActiveSheet()->setCellValue('J' . $k, $row["total_breakdown_hours"]);
 
 	}
-	$objPHPExcel->getActiveSheet()->getStyle("A9:I" . $k)->applyFromArray($styleArray);
-
 	
+	$k++;
+	$prod_per = sprintf("%0.2f",($prod_per/$i));
+
+	$objPHPExcel->getActiveSheet()->mergeCells("A".$k.":D".$k);
+	$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, 'Total');
+	$objPHPExcel->getActiveSheet()->setCellValue('E' . $k, $req_qty);
+	$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $before_rej_qty);
+	$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $after_rej_qty);
+	$objPHPExcel->getActiveSheet()->setCellValue('H' . $k, $prod_loss);
+	$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $prod_per);
+	$objPHPExcel->getActiveSheet()->setCellValue('J' . $k, $tbh);
+
+
+	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->applyFromArray($styleArray);
+
 	// Setting Design
-	$objPHPExcel->getActiveSheet()->getStyle("A9:I" . $k)->getFont()->setSize(8);
-	$objPHPExcel->getActiveSheet()->getStyle("A9:I" . $k)->getFont()->setName('Calibri');
-	$objPHPExcel->getActiveSheet()->getStyle("A9:I" . $k)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getFont()->setSize(11);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getFont()->setBold(false);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getFont()->setName('Calibri');
+	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getAlignment()->setWrapText(true);
 
 // Set page orientation and size
     //echo date('H:i:s') , " Set page orientation and size" , EOL;

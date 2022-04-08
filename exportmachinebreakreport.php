@@ -79,22 +79,18 @@ if ($_SESSION["sadmin_username"] != "") {
 	$j = 1;
 	$i = 0;
 	$objPHPExcel->getActiveSheet()->getStyle('A2:Z5000')->getAlignment()->setWrapText(true);
-	$styleArray = array(
-		'font' => array(
-			'name' => "Tahoma",
-			'size' => 10,
-		),
-		'alignment' => array(
-			'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-		),
-		'borders' => array(
-			'allborders' => array(
-				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-			),
-		),
-
-	);
+	$styleArray = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ];
 
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
@@ -108,13 +104,34 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
+	$setting_hour = 0;
+	$machine_fault_hour = 0;
+	$recess_hour = 0;
+	$maintanance_hour = 0;
+	$no_operator_hour = 0;
+	$no_load_hour = 0;
+	$power_fail_hour = 0;
+	$rework = 0;
+	$other = 0;
+	$total_breakdown_hours = 0;
 
-	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.total_breakdown_hours) as total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $sql . " group by $tabname.machine";
+	$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.total_breakdown_hours) as total_breakdown_hours,sum($tabpro.rework) as rework FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $sql . " group by $tabname.machine";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
 
 		$k++;
 		$i++;
+
+		$setting_hour += $row["setting_hour"];
+		$machine_fault_hour += $row["machine_fault_hour"];
+		$recess_hour += $row["recess_hour"];
+		$maintanance_hour += $row["maintanance_hour"];
+		$no_operator_hour += $row["no_operator_hour"];
+		$no_load_hour += $row["no_load_hour"];
+		$power_fail_hour += $row["power_fail_hour"];
+		$rework += $row["rework"];
+		$other += $row["other"];
+		$total_breakdown_hours += $row["total_breakdown_hours"];
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $row["machine"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["setting_hour"]);
@@ -124,16 +141,32 @@ if ($_SESSION["sadmin_username"] != "") {
 		$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $row["no_operator_hour"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $row["no_load_hour"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('H' . $k, $row["power_fail_hour"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $row["other"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('J' . $k, $row["total_breakdown_hours"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $row["rework"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('J' . $k, $row["other"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('K' . $k, $row["total_breakdown_hours"]);
 
 	}
-	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->applyFromArray($styleArray);
+	$k++;
+	$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, 'Total');
+	$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $setting_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('C' . $k, $machine_fault_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $recess_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('E' . $k, $maintanance_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $no_operator_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $no_load_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('H' . $k, $power_fail_hour);
+	$objPHPExcel->getActiveSheet()->setCellValue('I' . $k, $rework);
+	$objPHPExcel->getActiveSheet()->setCellValue('J' . $k, $other);
+	$objPHPExcel->getActiveSheet()->setCellValue('K' . $k, $total_breakdown_hours);
+
+
+	$objPHPExcel->getActiveSheet()->getStyle("A9:K" . $k)->applyFromArray($styleArray);
 
 	// Setting Design
-	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getFont()->setSize(8);
-	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getFont()->setName('Calibri');
-	$objPHPExcel->getActiveSheet()->getStyle("A9:J" . $k)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:K" . $k)->getFont()->setSize(11);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:K" . $k)->getFont()->setBold(false);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:K" . $k)->getFont()->setName('Calibri');
+	$objPHPExcel->getActiveSheet()->getStyle("A9:K" . $k)->getAlignment()->setWrapText(true);
 
 // Set page orientation and size
     //echo date('H:i:s') , " Set page orientation and size" , EOL;

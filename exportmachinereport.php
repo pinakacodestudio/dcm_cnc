@@ -77,22 +77,18 @@ if ($_SESSION["sadmin_username"] != "") {
 	$j = 1;
 	$i = 0;
 	$objPHPExcel->getActiveSheet()->getStyle('A2:Z5000')->getAlignment()->setWrapText(true);
-	$styleArray = array(
-		'font' => array(
-			'name' => "Tahoma",
-			'size' => 10,
-		),
-		'alignment' => array(
-			'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-			'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
-		),
-		'borders' => array(
-			'allborders' => array(
-				'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-			),
-		),
-
-	);
+	$styleArray = [
+        'alignment' => [
+            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        ],
+        'borders' => [
+            'allBorders' => [
+                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                'color' => ['rgb' => '000000']
+            ]
+        ]
+    ];
 
 	if ($msdate != "" && $medate != "") {
 		$date = DateTime::createFromFormat('d/m/Y', $msdate);
@@ -106,28 +102,41 @@ if ($_SESSION["sadmin_username"] != "") {
 
 	$ddate = "From :- " . $msdate . " To :- " . $medate;
 	$k = 8;
+	$requestnos = 0;
+	$actualnos = 0;
+	$increaseqty = 0;
 
 	$sql = "SELECT $tabname.id,$tabmachine.machine, sum($tabname.required_product_q_per_hr) as requestnos, sum($tabpro3.total_q_after_rejection) as actualnos FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro3 ON $tabpro3.production_1=$tabname.id " . $sql . " group by $tabname.machine";
 	$rs = $db->query($sql) or die("cannot Select Customers" . $db->error);
 	while ($row = $rs->fetch_assoc()) {
-		$date = new DateTime($row["productiondate"]);
-		$productiondate = $date->format('d-m-Y');
-
+		
 		$k++;
 		$i++;
+		$requestnos += $row['requestnos']*11;
+		$actualnos += $row['actualnos'];
+		$increaseqty +=  $row["actualnos"] - ($row["requestnos"] * 11);
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $row["machine"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["requestnos"] * 11);
+		
+		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, strval($row["requestnos"] * 11));
 		$objPHPExcel->getActiveSheet()->setCellValue('C' . $k, $row["actualnos"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $row["actualnos"] - ($row["requestnos"] * 11));
+		$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, strval($row["actualnos"] - ($row["requestnos"] * 11)));
 
 	}
+	$k++;
+	$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, 'Total');
+	$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $requestnos);
+	$objPHPExcel->getActiveSheet()->setCellValue('C' . $k, $actualnos);
+	$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $increaseqty);
+
+
 	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->applyFromArray($styleArray);
 
 	// Setting Design
-	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->getFont()->setSize(9);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->getFont()->setSize(11);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->getFont()->setBold(false);
 	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->getFont()->setName('Calibri');
-	$objPHPExcel->getActiveSheet()->getStyle("A9:I" . $k)->getAlignment()->setWrapText(true);
+	$objPHPExcel->getActiveSheet()->getStyle("A9:D" . $k)->getAlignment()->setWrapText(true);
 
 	$objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
 	$objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
