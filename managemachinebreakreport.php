@@ -109,7 +109,7 @@ if ($_SESSION["sadmin_username"] != "") {
 
 						<form id="login" name="login" method="post" action="<?php echo $sitepath; ?>delete_process.php" >
 							<input type="hidden" name="deleteKey" value="<?= $rndstring; ?>" />
-						<table class="table table-striped table-bordered bootstrap-datatable datatable">
+						<table class="table table-striped table-bordered bootstrap-datatable" id="datatable">
 						  <thead>
 							  <tr>
 								  <th>Machine</th>
@@ -128,21 +128,21 @@ if ($_SESSION["sadmin_username"] != "") {
 						  <tbody>
                           <?php
 
-																									if ($msdate != "" && $medate != "") {
-																										$date = DateTime::createFromFormat('d/m/Y', $msdate);
-																										$msdate = $date->format('Y-m-d');
-																										$date = DateTime::createFromFormat('d/m/Y', $medate);
-																										$medate = $date->format('Y-m-d');
+							if ($msdate != "" && $medate != "") {
+								$date = DateTime::createFromFormat('d/m/Y', $msdate);
+								$msdate = $date->format('Y-m-d');
+								$date = DateTime::createFromFormat('d/m/Y', $medate);
+								$medate = $date->format('Y-m-d');
 
-																										$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
+								$sql = " where $tabname.productiondate >= '$msdate' and $tabname.productiondate <= '$medate'";
 
-																									}
+							}
 
-																									$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.rework) as rework,sum($tabpro.total_breakdown_hours) as total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $sql . " group by $tabname.machine";
-																									$rs = $db->query($sql) or die("cannot Select data " . $db->error);
-																									while ($row = $rs->fetch_assoc()) {
+							$sql = "SELECT $tabname.id,$tabname.productiondate,$tabmachine.machine, sum($tabpro.setting_hour) as setting_hour, sum($tabpro.machine_fault_hour) as machine_fault_hour,sum($tabpro.recess_hour) as recess_hour,sum($tabpro.maintanance_hour) as maintanance_hour,sum($tabpro.no_operator_hour) as no_operator_hour,sum($tabpro.no_load_hour) as no_load_hour,sum($tabpro.power_fail_hour) as power_fail_hour,sum($tabpro.other) as other,sum($tabpro.rework) as rework,sum($tabpro.total_breakdown_hours) as total_breakdown_hours FROM $tabname LEFT JOIN $tabmachine ON $tabmachine.id=$tabname.machine LEFT JOIN $tabpro ON $tabpro.production_1=$tabname.id " . $sql . " group by $tabname.machine";
+							$rs = $db->query($sql) or die("cannot Select data " . $db->error);
+							while ($row = $rs->fetch_assoc()) {
 
-																										?>
+								?>
 							
 							<tr>
 								<td><?= $row["machine"]; ?></td>
@@ -163,6 +163,22 @@ if ($_SESSION["sadmin_username"] != "") {
 																										} ?>
 
 						  </tbody>
+						  <tfoot>
+							  <tr>
+								  <th>Total</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								 
+							  </tr>
+						  </tfoot>   
 					  </table>
 							<input type="hidden" name="delid" id="delid" value="<?= $c; ?>" />
 						</form>
@@ -182,38 +198,89 @@ if ($_SESSION["sadmin_username"] != "") {
 		
 	</div><!--/.fluid-container-->
 <?php include("inc/footerscripts.php"); ?>
-		<script src="js/sweetalert.min.js"></script>
+		
+<script type="text/javascript">
+					
+			//datatable
+			$("#datatable").dataTable({
+				sDom:
+				"<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				sPaginationType: "bootstrap",
+				order: [[0, "desc"]],
+				oLanguage: {
+				sLengthMenu: "_MENU_ records per page"
+				},
+				"footerCallback": function(row, data, start, end, display) {
+				var api = this.api(),
+				data;
+				// Remove the formatting to get integer data for summation
+				var intVal = function(i) {
+				return typeof i === 'string' ?
+					i.replace(/[\$,]/g, '') * 1 :
+					typeof i === 'number' ?
+					i : 0;
+				};
+				var col1 = api.column(1).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col2 = api.column(2).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col3 = api.column(3).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col4 = api.column(4).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col5 = api.column(5).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				
+				var col6 = api.column(6).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				
+				var col7 = api.column(7).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				
+				var col8 = api.column(8).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				
+				var col9 = api.column(9).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col10 = api.column(10).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				
+				// Update footer
+				$(api.column(1).footer()).html(col1);
+				$(api.column(2).footer()).html(col2);
+				$(api.column(3).footer()).html(col3);
+				$(api.column(4).footer()).html(col4);
+				$(api.column(5).footer()).html(col5);
+				$(api.column(6).footer()).html(col6);
+				$(api.column(7).footer()).html(col7);
+				$(api.column(8).footer()).html(col8);
+				$(api.column(9).footer()).html(col9);
+				$(api.column(10).footer()).html(col10);
+				
 
-		<script type="text/javascript">
-			function deleteRecord(val){
-
-				document.login.delid.value = val;
-				swal({
-						title: "Are you sure?",
-						text: "You will not be able to recover this Production Details!",
-						type: "warning",
-						showCancelButton: true,
-						confirmButtonClass: "btn-danger",
-						confirmButtonText: "Yes, delete it!",
-						cancelButtonText: "No, cancel plx!",
-						closeOnConfirm: false,
-						closeOnCancel: false
-					},
-					function(isConfirm) {
-						if (isConfirm) {
-
-							document.login.submit();
-
-						} else {
-							swal({
-								title: "Cancelled",
-								text: "Your Records are safe :)",
-								type: "error",
-								confirmButtonClass: "btn-danger"
-							});
-						}
-					});
 			}
+			});
+			
 		</script>
 
 </body>

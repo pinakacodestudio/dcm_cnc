@@ -106,13 +106,14 @@ if($_SESSION["sadmin_username"]!="")
 
 						<form id="login" name="login" method="post" action="<?php echo $sitepath;?>delete_process.php" >
 							<input type="hidden" name="deleteKey" value="<?=$rndstring;?>" />
-						<table class="table table-striped table-bordered bootstrap-datatable datatable">
+						<table class="table table-striped table-bordered bootstrap-datatable" id="datatable">
 						  <thead>
 							  <tr>
 								  <th>Operator Name</th>
 								  <th>Turning Rejection Nos.</th>
 							  </tr>
 						  </thead>   
+						  
 						  <tbody>
                           <?php
 
@@ -141,6 +142,12 @@ if($_SESSION["sadmin_username"]!="")
                             <?php } ?>
 
 						  </tbody>
+						  <tfoot>
+							  <tr>
+								  <th>Total</th>
+								  <th>0</th>
+							  </tr>
+						  </tfoot>   
 					  </table>
 							<input type="hidden" name="delid" id="delid" value="<?= $c; ?>" />
 						</form>
@@ -160,39 +167,42 @@ if($_SESSION["sadmin_username"]!="")
 		
 	</div><!--/.fluid-container-->
 <?php include("inc/footerscripts.php"); ?>
-		<script src="js/sweetalert.min.js"></script>
-
-		<script type="text/javascript">
-			function deleteRecord(val){
-
-				document.login.delid.value = val;
-				swal({
-						title: "Are you sure?",
-						text: "You will not be able to recover this Production Details!",
-						type: "warning",
-						showCancelButton: true,
-						confirmButtonClass: "btn-danger",
-						confirmButtonText: "Yes, delete it!",
-						cancelButtonText: "No, cancel plx!",
-						closeOnConfirm: false,
-						closeOnCancel: false
-					},
-					function(isConfirm) {
-						if (isConfirm) {
-
-							document.login.submit();
-
-						} else {
-							swal({
-								title: "Cancelled",
-								text: "Your Records are safe :)",
-								type: "error",
-								confirmButtonClass: "btn-danger"
-							});
-						}
+				
+<script type="text/javascript">
+					
+					//datatable
+					$("#datatable").dataTable({
+						sDom:
+						"<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+						sPaginationType: "bootstrap",
+						order: [[0, "desc"]],
+						oLanguage: {
+						sLengthMenu: "_MENU_ records per page"
+						},
+						"footerCallback": function(row, data, start, end, display) {
+						var api = this.api(),
+						data;
+						// Remove the formatting to get integer data for summation
+						var intVal = function(i) {
+						return typeof i === 'string' ?
+							i.replace(/[\$,]/g, '') * 1 :
+							typeof i === 'number' ?
+							i : 0;
+						};
+						var col1 = api.column(1).data()
+						.reduce(function(a, b) {
+							return intVal(a) + intVal(b);
+						}, 0);
+							
+						// Update footer
+						$(api.column(1).footer()).html(col1);
+											
+		
+					}
 					});
-			}
-		</script>
+					
+				</script>
+		
 
 </body>
 </html>

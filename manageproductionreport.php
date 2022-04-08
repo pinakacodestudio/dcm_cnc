@@ -109,7 +109,7 @@ if($_SESSION["sadmin_username"]!="")
 
 						<form id="login" name="login" method="post" action="<?php echo $sitepath;?>delete_process.php" >
 							<input type="hidden" name="deleteKey" value="<?=$rndstring;?>" />
-						<table class="table table-striped table-bordered bootstrap-datatable datatable">
+						<table class="table table-striped table-bordered bootstrap-datatable" id="datatable">
 						  <thead>
 							  <tr>
 								  <th>Production Date</th>
@@ -164,7 +164,7 @@ if($_SESSION["sadmin_username"]!="")
 								<td class="center"><?= $row["required_product_q_per_hr"]; ?></td>
 								<td class="center"><?= $row["total_q_before_rejection"]; ?></td>
 								<td class="center"><?= $row["total_q_after_rejection"]; ?></td>
-								<td class="center"><?= $production_loss_increase_q ?></td>
+								<td class="center"><?= str_replace(' ','',$production_loss_increase_q) ?></td>
 								<td class="center"><?= round($production_per,2) ?></td>
 								<td class="center"><?= $row["total_breakdown_hours"]; ?></td>
 								<td class="center">
@@ -177,6 +177,19 @@ if($_SESSION["sadmin_username"]!="")
                             <?php } ?>
 
 						  </tbody>
+						  <tfoot>
+							  <tr>
+								  
+								  <th colspan="4">Total</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>0</th>
+								  <th>&nbsp;</th>
+							  </tr>
+						  </tfoot>   
 					  </table>
 							<input type="hidden" name="delid" id="delid" value="<?= $c; ?>" />
 						</form>
@@ -196,38 +209,106 @@ if($_SESSION["sadmin_username"]!="")
 		
 	</div><!--/.fluid-container-->
 <?php include("inc/footerscripts.php"); ?>
-		<script src="js/sweetalert.min.js"></script>
-
-		<script type="text/javascript">
-			function deleteRecord(val){
-
-				document.login.delid.value = val;
-				swal({
-						title: "Are you sure?",
-						text: "You will not be able to recover this Production Details!",
-						type: "warning",
-						showCancelButton: true,
-						confirmButtonClass: "btn-danger",
-						confirmButtonText: "Yes, delete it!",
-						cancelButtonText: "No, cancel plx!",
-						closeOnConfirm: false,
-						closeOnCancel: false
-					},
-					function(isConfirm) {
-						if (isConfirm) {
-
-							document.login.submit();
-
+<script type="text/javascript">
+					
+			//datatable
+			$("#datatable").dataTable({
+				sDom:
+				"<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span12'i><'span12 center'p>>",
+				sPaginationType: "bootstrap",
+				order: [[0, "desc"]],
+				oLanguage: {
+				sLengthMenu: "_MENU_ records per page"
+				},
+				"footerCallback": function(row, data, start, end, display) {
+				var api = this.api(),
+				data;
+				// Remove the formatting to get integer data for summation
+				var intVal = function(i) {
+				return typeof i === 'string' ?
+					i.replace(/[\$,]/g, '') * 1 :
+					typeof i === 'number' ?
+					i : 0;
+				};
+			
+				var col4 = api.column(4).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col5 = api.column(5).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col6 = api.column(6).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col7 = api.column(7).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				var col9 = api.column(9).data()
+				.reduce(function(a, b) {
+					return intVal(a) + intVal(b);
+				}, 0);
+				// Update footer
+				
+				$(api.column(4).footer()).html(col4);
+				$(api.column(5).footer()).html(col5);
+				$(api.column(6).footer()).html(col6);
+				$(api.column(7).footer()).html(col7);
+				$(api.column(9).footer()).html(col9);
+				
+				var columnDataTotal = api
+				.column(8)
+				.data();
+				var theColumnTotal = columnDataTotal
+					.reduce(function(a, b) {
+						if (isNaN(a)) {
+							return '';
 						} else {
-							swal({
-								title: "Cancelled",
-								text: "Your Records are safe :)",
-								type: "error",
-								confirmButtonClass: "btn-danger"
-							});
+							a = parseFloat(a);
 						}
-					});
+						if (isNaN(b)) {
+							return '';
+						} else {
+							b = parseFloat(b);
+						}
+						return a + b;
+					}, 0);
+				// view page column
+				var columnData = api
+					.column(8, {
+						page: 'current'
+					})
+					.data();
+				var theColumnPage = columnData
+					.reduce(function(a, b) {
+						if (isNaN(a)) {
+							return '';
+						} else {
+							a = parseFloat(a);
+						}
+						if (isNaN(b)) {
+							return '';
+						} else {
+							b = parseFloat(b);
+						}
+						return a + b;
+					}, 0);
+				
+				if(theColumnTotal == 0 || columnDataTotal.count() == 0){
+					totalvalue = 0
+				}else{
+					totalvalue = theColumnTotal / columnDataTotal.count();
+				}
+
+				//$(api.column(6).footer()).html(parseFloat(theColumnPage / columnData.count()).toFixed(2) + ' (' + parseFloat(theColumnTotal / columnDataTotal.count()).toFixed(2) + ' Total)');
+				$(api.column(8).footer()).html(parseFloat(totalvalue).toFixed(2));
+
 			}
+			});
+			
 		</script>
 
 </body>
