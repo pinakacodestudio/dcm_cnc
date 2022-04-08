@@ -12,6 +12,7 @@ $managePage = " Production Phase 3";
 $tabname = "production_machine_breakdown";
 $tabmain = "production_1";
 $tab2 = "production_3";
+$tab1 = "production_2";
 $tabcustomer = "customer";
 $taboperator = "operator";
 $tabmachine = "machine";
@@ -37,36 +38,8 @@ if ($_SESSION["sadmin_username"] != "") {
 			$rework = $row["rework"];
 			$other = $row["other"];
 			$total_breakdown_hours = $row["total_breakdown_hours"];
-			/*
-			if ($setting_hour == 0) {
-				$setting_hour = "";
-			}
-			if ($machine_fault_hour == 0) {
-				$machine_fault_hour = "";
-			}
-			if ($recess_hour == 0) {
-				$recess_hour = "";
-			}
-			if ($maintanance_hour == 0) {
-				$maintanance_hour = "";
-			}
-			if ($no_operator_hour == 0) {
-				$no_operator_hour = "";
-			}
-			if ($no_load_hour == 0) {
-				$no_load_hour = "";
-			}
-			if ($power_fail_hour == 0) {
-				$power_fail_hour = "";
-			}
-			if ($rework == 0) {
-				$rework = "";
-			}
-			if ($other == 0) {
-				$other = "";
-			}
-			 */
-			$qry = "SELECT $tabmain.productiondate,$tabmain.part_count_start,$tabjob.jobno,$tabmain.shift,$tabmain.required_product_q_per_hr,$tabmachine.machine,$tabcustomer.customer,$taboperator.operator,$tab2.total_q_after_rejection,$tab2.expected_q,$tab2.setting_hr,$tab2.production_loss_increase_q FROM $tabmain LEFT JOIN $tabmachine ON $tabmachine.id=$tabmain.machine  LEFT JOIN $tab2 ON $tab2.production_1=$tabmain.id LEFT JOIN $tabcustomer ON $tabcustomer.id=$tabmain.customer LEFT JOIN $tabjob ON $tabjob.id=$tabmain.job_no LEFT JOIN $taboperator ON $taboperator.id=$tabmain.operator where $tabmain.id=" . $proid . "";
+			
+			$qry = "SELECT $tabmain.productiondate,$tabmain.part_count_start,$tabjob.jobno,$tabmain.shift,$tabmain.required_product_q_per_hr,$tabmachine.machine,$tabcustomer.customer,$taboperator.operator,$tab2.total_q_after_rejection,$tab2.expected_q,$tab2.setting_hr,$tab2.production_loss_increase_q,$tab1.totalhour FROM $tabmain LEFT JOIN $tabmachine ON $tabmachine.id=$tabmain.machine  LEFT JOIN $tab2 ON $tab2.production_1=$tabmain.id LEFT JOIN $tab1 ON $tab1.production_1=$tabmain.id LEFT JOIN $tabcustomer ON $tabcustomer.id=$tabmain.customer LEFT JOIN $tabjob ON $tabjob.id=$tabmain.job_no LEFT JOIN $taboperator ON $taboperator.id=$tabmain.operator where $tabmain.id=" . $proid . "";
 			$result = mysqli_query($db, $qry) or die("cannot select Production table " . mysqli_error($db));
 			if ($row1 = mysqli_fetch_array($result)) {
 
@@ -80,6 +53,7 @@ if ($_SESSION["sadmin_username"] != "") {
 				$total_q_after_rejection = $row1["total_q_after_rejection"];
 				$expected_q = $row1["expected_q"];
 				$setting_hr = $row1["setting_hr"];
+				$totalhour = $row1["totalhour"];
 				$production_loss_increase_q = $row1["production_loss_increase_q"];
 
 				if ($row["shift"] == "0") {
@@ -87,6 +61,9 @@ if ($_SESSION["sadmin_username"] != "") {
 				} else {
 					$shift = "Night";
 				}
+
+				$expected_time = ($totalhour * 60) -  $setting_hr;
+				$totalworktime = intval(($expected_time / $expected_q) * $total_q_after_rejection);
 
 				$date = new DateTime($row1["productiondate"]);
 				$productiondate = $date->format('m/d/Y');
@@ -143,6 +120,7 @@ if ($_SESSION["sadmin_username"] != "") {
 							<input type="hidden" name="opt" value="<?php echo $operation; ?>" />
 							<input type="hidden" name="total_q_after_rejection" id="total_q_after_rejection" value="<?php echo $total_q_after_rejection; ?>" />
 							<input type="hidden" name="required_product_q_per_hr" id="required_product_q_per_hr" value="<?php echo $required_product_q_per_hr; ?>" />
+							<input type="hidden" name="totalhour" id="totalhour" value="<?php echo $totalhour; ?>" />
 								<fieldset>
                           <div class="well detbox">
                           <div class="row-fluid">
@@ -242,11 +220,21 @@ if ($_SESSION["sadmin_username"] != "") {
 								</div>
 							</div>
 
+							
+
                              <div class="control-group">
 							  <label class="control-label">Expected Qty.</label>
 							  <div class="controls">
 								<input type="text" class="input-xlarge" id="dexpected_q" name="dexpected_q" value="<?= $expected_q; ?>"  placeholder="0" disabled required>
 								  <input type="hidden" class="input-xlarge" id="expected_q" name="expected_q" value="<?= $expected_q; ?>"  placeholder="0" required>
+							  </div>
+							</div>
+                           
+							<div class="control-group">
+							  <label class="control-label">Actual Production Qty</label>
+							  <div class="controls">
+								<input type="text" class="input-xlarge" id="dactualproduction" name="dactualproduction" value="<?= $total_q_after_rejection; ?>"  placeholder="0" disabled required>
+								  <input type="hidden" class="input-xlarge" id="actualproduction" name="actualproduction" value="<?= $total_q_after_rejection; ?>"  placeholder="0" required>
 							  </div>
 							</div>
 
@@ -262,6 +250,23 @@ if ($_SESSION["sadmin_username"] != "") {
 									?>
 								<input type="text" class="input-xlarge <?= $clvar; ?>" id="dproduction_loss_increase_q" name="dproduction_loss_increase_q" value="<?= $production_loss_increase_q; ?>"  placeholder="0" disabled required>
 								  <input type="hidden" class="input-xlarge" id="production_loss_increase_q" name="production_loss_increase_q" value="<?= $production_loss_increase_q; ?>"  placeholder="0" required>
+							  </div>
+							</div>
+
+							
+							<div class="control-group">
+								<label class="control-label">Expected Time</label>
+								<div class="controls">
+									<input type="text" disabled class="input-xlarge" id="dexpected_time" name="dexpected_time" value="<?= $expected_time; ?> mins"  placeholder="0" required>
+									<input type="hidden" class="input-xlarge" id="expected_time" name="expected_time" value="<?= $expected_time; ?>"  placeholder="0" required>
+								</div>
+							</div>
+
+							<div class="control-group">
+							  <label class="control-label">Total Work Time</label>
+							  <div class="controls">
+								<input type="text" class="input-xlarge" id="dtotalwork_time" name="dtotalwork_time" value="<?= $totalworktime; ?> mins"  placeholder="0" disabled required>
+								  <input type="hidden" class="input-xlarge" id="totalwork_time" name="totalwork_time" value="<?= $totalworktime; ?>"  placeholder="0" required>
 							  </div>
 							</div>
 							
@@ -304,6 +309,8 @@ if ($_SESSION["sadmin_username"] != "") {
 						var pfh = parseInt($("#power_fail_hour").val()); // Field Value
 						var rwh = parseInt($("#rework").val()); // Field Value
 						var oh = parseInt($("#other").val()); // Field Value
+						var th = parseInt($("#totalhour").val()); // Field Value
+						var tqar = parseInt($("#total_q_after_rejection").val()); // Field Value
 					
 
 						if(isNaN(sh)){ sh = 0;}
@@ -315,28 +322,38 @@ if ($_SESSION["sadmin_username"] != "") {
 						if(isNaN(pfh)){ pfh = 0;}
 						if(isNaN(oh)){ oh = 0;}
 						if(isNaN(rwh)){ rwh = 0;}
+						if(isNaN(th)){ th = 0;}
 
 
-						var tot = sh + mfh + mh + noh + nlh + pfh + rwh 
-								//+ oh
-								;
+						var tot = sh + mfh + mh + noh + nlh + pfh + rwh ;
 
 						$('#total_breakdown_hours').val(tot);
 						$('#dtotal_breakdown_hours').val(tot);
 
-						tot = tot + oh + rh;
-							$('#setting_hr').val(tot);
-						$('#dsetting_hr').val(tot);
+						tot1 = tot + oh + rh;
+						$('#setting_hr').val(tot1);
+						$('#dsetting_hr').val(tot1);
 
 
-						var hours = tot / 60;   
+						var hours = tot1 / 60;   
 						var jct = 12; // Field Value
 						var rqh = parseInt($("#required_product_q_per_hr").val()); // Field Value
 						
-						var tot = rqh * (jct - hours);
+						var tot2 = rqh * (jct - hours);
 
-						$('#expected_q').val(tot);
-						$('#dexpected_q').val(tot);
+						$('#expected_q').val(tot2);
+						$('#dexpected_q').val(tot2);
+
+						// Calculating Total Work Minutes
+
+						let totaltime = th*60 - tot1;
+						$('#expected_time').val(totaltime);
+						$('#dexpected_time').val(totaltime+" mins");
+
+						let worktime = parseInt((totaltime / tot2) * tqar);
+						$('#totalwork_time').val(worktime);
+						$('#dtotalwork_time').val(worktime+" mins");
+
 
 						showProfit();
 
