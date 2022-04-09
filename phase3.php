@@ -144,7 +144,7 @@ if ($_SESSION["sadmin_username"] != "") {
                               <div class="control-group">
 							  <label class="control-label">Setting Minutes</label>
 							  <div class="controls">
-								<input type="number" class="input-xlarge callblur" id="setting_hour" name="setting_hour" value="<?= $setting_hour ?>" placeholder="0" required>
+								<input type="number" class="input-xlarge callblur" id="setting_hour" name="setting_hour" value="<?= $setting_hour ?>" placeholder="0" required autofocus>
 							  </div>
 							</div>
                             
