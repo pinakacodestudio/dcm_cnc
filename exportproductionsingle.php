@@ -68,8 +68,8 @@ if ($_SESSION["sadmin_username"] != "") {
 <div style="width:90%; margin:0 auto;">
 <table style="padding:20px;">
 <tr> 
-<td> <img src="img/logo.png" alt="" style="float:left; width:60px;" /><h2 style="float:left; margin-left:10px;">Unique Industries</h2> </td>
-<td><p style="text-align:right; font-weight:bold;">Report Name : Production Report</p></td>
+<td> <img src="img/DCM.jpg" alt="" style="float:left; width:60px;margin-top:10px;" /><h2 style="float:left; margin-left:10px;">DCM Industries</h2> </td>
+<td><p style="text-align:right; font-weight:bold;">Report Name : Production Report<br>Format No. F PDN 01<br>REV. No. & Dt. 01 / 01.01.2022</p></td>
 </tr>
 </table>
 
