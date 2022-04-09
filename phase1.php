@@ -204,7 +204,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">8:00 to 9:00 am </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_1" name="time_1" value="<?= $t1; ?>" placeholder="0" required>
-																	<input type="checkbox" id="check_1" name="check_1" <?= $checked_1; ?>> 
+																	<input type="checkbox" class="mycheckbox" id="check_1" name="check_1" <?= $checked_1; ?>> 
                                 </div>
 															</div>
 														</div>
@@ -223,7 +223,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">9:00 to 10:00 am</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_2" name="time_2" value="<?= $t2; ?>" placeholder="0" required>
-                                  <input type="checkbox" id="check_2" name="check_2" <?= $checked_2; ?>> 
+                                  <input type="checkbox" class="mycheckbox" id="check_2" name="check_2" <?= $checked_2; ?>> 
                                 </div>
 															</div>
 														</div>
@@ -242,7 +242,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">10:00 to 11:00 am </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_3" name="time_3" value="<?= $t3; ?>" placeholder="0" required>
-                                  <input type="checkbox" id="check_3" name="check_3" <?= $checked_3; ?>> 
+                                  <input type="checkbox" class="mycheckbox" id="check_3" name="check_3" <?= $checked_3; ?>> 
                                 </div>
 															</div>
 														</div>
@@ -261,7 +261,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">11:00 to 12:00 pm</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_4" name="time_4" value="<?= $t4; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_4" name="check_4" <?= $checked_4; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_4" name="check_4" <?= $checked_4; ?>>
                                 </div>
 															</div>
 														</div>
@@ -280,7 +280,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">12:00 to 1:00 pm </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_5" name="time_5" value="<?= $t5; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_5" name="check_5" <?= $checked_5; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_5" name="check_5" <?= $checked_5; ?>>
                                 </div>
 															</div>
 														</div>
@@ -299,7 +299,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">1:00 to 2:00 pm</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_6" name="time_6" value="<?= $t6; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_6" name="check_6" <?= $checked_6; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_6" name="check_6" <?= $checked_6; ?>>
                                 </div>
 															</div>
 														</div>
@@ -318,7 +318,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">2:00 to 3:00 pm </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_7" name="time_7" value="<?= $t7; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_7" name="check_7" <?= $checked_7; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_7" name="check_7" <?= $checked_7; ?>>
                                 </div>
 															</div>
 														</div>
@@ -337,7 +337,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">3:00 to 4:00 pm</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_8" name="time_8" value="<?= $t8; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_8" name="check_8" <?= $checked_8; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_8" name="check_8" <?= $checked_8; ?>>
                                 </div>
 															</div>
 														</div>
@@ -356,7 +356,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">4:00 to 5:00 pm </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_9" name="time_9" value="<?= $t9; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_9" name="check_9" <?= $checked_9; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_9" name="check_9" <?= $checked_9; ?>>
                                 </div>
 															</div>
 														</div>
@@ -375,7 +375,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">5:00 to 6:00 pm</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_10" name="time_10" value="<?= $t10; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_10" name="check_10" <?= $checked_10; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_10" name="check_10" <?= $checked_10; ?>>
                                 </div>
 															</div>
 														</div>
@@ -394,7 +394,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">6:00 to 7:00 pm </label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_11" name="time_11" value="<?= $t11; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_11" name="check_11" <?= $checked_11; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_11" name="check_11" <?= $checked_11; ?>>
                                 </div>
 															</div>
 														</div>
@@ -413,7 +413,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																<label class="control-label">7:00 to 8:00 am</label>
 																<div class="controls">
 																	<input type="number" class="input-xlarge callblur" id="time_12" name="time_12" value="<?= $t12; ?>" placeholder="0" required> 
-                                  <input type="checkbox" id="check_12" name="check_12" <?= $checked_12; ?>>
+                                  <input type="checkbox" class="mycheckbox" id="check_12" name="check_12" <?= $checked_12; ?>>
                                 </div>
 															</div>
 														</div>
@@ -427,6 +427,13 @@ if ($_SESSION["sadmin_username"] != "") {
 														</div>
 													</div>
 													<div class="row-fluid">
+													<div class="span6">
+															<div class="control-group">
+																<label class="control-label">Starting Count</label>
+																<div class="controls">
+																	<input type="text" class="input-xlarge" id="scount" name="scount" value="<?= $start_count; ?>" placeholder="0" disabled required> </div>
+															</div>
+														</div>	
 														<div class="span6">
 															<div class="control-group">
 																<label class="control-label">Total Qty. Before Rejection</label>
@@ -435,13 +442,7 @@ if ($_SESSION["sadmin_username"] != "") {
 																	<input type="hidden" class="input-xlarge" id="total_q_before_rejection" name="total_q_before_rejection" value="<?= $total_q_before_rejection; ?>"> </div>
 															</div>
 														</div>
-														<div class="span6">
-															<div class="control-group">
-																<label class="control-label">Starting Count</label>
-																<div class="controls">
-																	<input type="text" class="input-xlarge" id="scount" name="scount" value="<?= $start_count; ?>" placeholder="0" disabled required> </div>
-															</div>
-														</div>
+														
 													</div>
 													<div class="form-actions">
 														<button type="submit" class="btn btn-primary">Save changes</button> <a href="<?= $pageUrl; ?>" class="btn">Cancel</a> </div>
@@ -464,8 +465,22 @@ if ($_SESSION["sadmin_username"] != "") {
 				<script>
 				$(document).ready(function() {
 					$(".callblur").each(function() {
-						var starting_count = parseInt($("#starting_count").val());
 						$(this).bind("blur", function() {
+							checkData();
+						})
+					})
+					$("input.mycheckbox").click(function () {
+						// Loop all these checkboxes which are checked
+						$("input.mycheckbox:checked").each(function(){
+							checkData();
+							// Use $(this).val() to get the Bike, Car etc.. value
+						});
+					})
+				});
+
+				function checkData(){
+					var starting_count = parseInt($("#starting_count").val());
+						
 							var t1 = parseInt($("#time_1").val()); // T1 Field Value
 							var t2 = parseInt($("#time_2").val()); // T2 Field Value
 							var t3 = parseInt($("#time_3").val()); // T3 Field Value
@@ -490,6 +505,56 @@ if ($_SESSION["sadmin_username"] != "") {
 							var qa10 = parseInt($("#q_after_10").val()); // QA10 Field Value
 							var qa11 = parseInt($("#q_after_11").val()); // QA11 Field Value
 							var qa12 = parseInt($("#q_after_12").val()); // QA12 Field Value
+
+							var cb1 = document.querySelector('#check_1'); // Checkbox Value
+							if(!cb1.checked){
+								t1 = 0;
+							}
+							var cb2 = document.querySelector('#check_2'); // Checkbox Value
+							if(!cb2.checked){
+								t2 = 0;
+							}
+							var cb3 = document.querySelector('#check_3'); // Checkbox Value
+							if(!cb3.checked){
+								t3 = 0;
+							}
+							var cb4 = document.querySelector('#check_4'); // Checkbox Value
+							if(!cb4.checked){
+								t4 = 0;
+							}
+							var cb5 = document.querySelector('#check_5'); // Checkbox Value
+							if(!cb5.checked){
+								t5 = 0;
+							}
+							var cb6 = document.querySelector('#check_6'); // Checkbox Value
+							if(!cb6.checked){
+								t6 = 0;
+							}
+							var cb7 = document.querySelector('#check_7'); // Checkbox Value
+							if(!cb7.checked){
+								t7 = 0;
+							}
+							var cb8 = document.querySelector('#check_8'); // Checkbox Value
+							if(!cb8.checked){
+								t8 = 0;
+							}
+							var cb9 = document.querySelector('#check_9'); // Checkbox Value
+							if(!cb9.checked){
+								t9 = 0;
+							}
+							var cb10 = document.querySelector('#check_10'); // Checkbox Value
+							if(!cb10.checked){
+								t10 = 0;
+							}
+							var cb11 = document.querySelector('#check_11'); // Checkbox Value
+							if(!cb11.checked){
+								t11 = 0;
+							}
+							var cb12 = document.querySelector('#check_12'); // Checkbox Value
+							if(!cb12.checked){
+								t12 = 0;
+							}
+
 							$('#dq_after_1').val(starting_count + t1);
 							$('#q_after_1').val(starting_count + t1);
 							$('#dq_after_2').val(starting_count + t1 + t2);
@@ -518,9 +583,8 @@ if ($_SESSION["sadmin_username"] != "") {
 							$('#q_after_12').val(starting_count + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12);
 							$('#dtotal_q_before_rejection').val(starting_count + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12);
 							$('#total_q_before_rejection').val(starting_count + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8 + t9 + t10 + t11 + t12);
-						})
-					})
-				});
+						
+				}
 				</script>
 	</body>
 
