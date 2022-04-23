@@ -336,7 +336,7 @@ if ($_SESSION["sadmin_username"] != "") {
 
 
 						var hours = tot1 / 60;   
-						var jct = 12; // Field Value
+						var jct = <?= $totalhour; ?>; // Field Value
 						var rqh = parseInt($("#required_product_q_per_hr").val()); // Field Value
 						
 						var tot2 = rqh * (jct - hours);
