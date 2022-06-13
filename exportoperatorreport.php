@@ -121,12 +121,20 @@ if ($_SESSION["sadmin_username"] != "") {
 		$k++;
 		$i++;
 		$operator = $row["operator"];
-		$percentage += $row["avgproduction"];
+		//$percentage += $row["avgproduction"];
 		$req_qty += $row["req_qty"];
 		$prod_qty += $row["prod_qty"];
 		$turning_rejection_nos += $row["turning_rejection_nos"]; 
 		$variation_nos += $row["variation_nos"];
 		$rework_nos += $row["rework_nos"];
+
+		$perval = 0;
+		if($prod_qty > 0){
+			$perval = sprintf("%0.02f",($row["prod_qty"] * 100)/$row["req_qty"]);
+		}
+
+		$percentage += $perval;
+		
 
 		$objPHPExcel->getActiveSheet()->setCellValue('A' . $k, $row["operator"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('B' . $k, $row["req_qty"]);
@@ -134,7 +142,7 @@ if ($_SESSION["sadmin_username"] != "") {
 		$objPHPExcel->getActiveSheet()->setCellValue('D' . $k, $row["turning_rejection_nos"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('E' . $k, $row["variation_nos"]);
 		$objPHPExcel->getActiveSheet()->setCellValue('F' . $k, $row["rework_nos"]);
-		$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $row["avgproduction"]);
+		$objPHPExcel->getActiveSheet()->setCellValue('G' . $k, $perval);
 
 	}
 

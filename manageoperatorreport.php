@@ -115,7 +115,7 @@ if($_SESSION["sadmin_username"]!="")
 								  <th>Turning Rejection</th>
 								  <th>Variations</th>
 								  <th>Rework</th>
-								  <th>Diff. %</th>
+								  <th>Production Percentage</th>
 							  </tr>
 						  </thead>   
 						  <tbody>
@@ -141,6 +141,13 @@ if($_SESSION["sadmin_username"]!="")
 								$turning_rejection_nos = $row["turning_rejection_nos"]; 
 								$variation_nos = $row["variation_nos"];
 								$rework_nos = $row["rework_nos"];
+
+								$perval = 0;
+								if($prod_qty > 0){
+									$perval = sprintf("%0.02f",($prod_qty * 100)/$req_qty);
+								}
+								
+
 							?>
 								<tr>
 									<td><?= $operator; ?></td>
@@ -149,7 +156,7 @@ if($_SESSION["sadmin_username"]!="")
 									<td><?= $turning_rejection_nos; ?></td>
 									<td><?= $variation_nos; ?></td>
 									<td><?= $rework_nos; ?></td>
-									<td><?= $percentage; ?></td>
+									<td><?= $perval; ?></td>
 								</tr>
                             <?php 
 							} 
