@@ -30,21 +30,4 @@ while ($row = $rs->fetch_assoc()) {
     // Insertion of Data
     dbRowUpdate($db, $tab2, $form_data, "where id=" . $row["id"]);
 }
-
-// $query = "select $tab2.id,$tabname.id as jobid from $tab2 LEFT JOIN $tabname ON $tab2.job_no = $tabname.jobno where $tab2.job_no != '0' ";
-// $rs = mysqli_query($db, $query) or die('Unknown error ' . mysqli_error($db));
-
-// while ($row = $rs->fetch_assoc()) {
-//     echo $jobid = $row["jobid"];
-//     echo "<br>";
-//     $form_data = array(
-//         'job_no' => $jobid
-//     );
-//         // Insertion of Data
-//     dbRowUpdate($db, $tab2, $form_data, "where id=" . $row["id"]);
-
-// }
-
-
-
 ?>
